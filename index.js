@@ -7,12 +7,17 @@ app.use(express.json());
 const VERIFY_TOKEN = "mi_token_seguro";
 const ACCESS_TOKEN = "AQUI_VA_TU_TOKEN";
 
-// Verificación webhook
 app.get("/webhook", (req, res) => {
-  if (req.query["hub.verify_token"] === VERIFY_TOKEN) {
-    return res.send(req.query["hub.challenge"]);
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  if (mode && token === VERIFY_TOKEN) {
+    console.log("Webhook verificado");
+    return res.status(200).send(challenge);
+  } else {
+    return res.sendStatus(403);
   }
-  res.sendStatus(403);
 });
 
 // Escuchar comentarios
